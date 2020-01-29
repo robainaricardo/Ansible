@@ -1,0 +1,5 @@
+[test]
+hosta
+
+[production]
+hostb
