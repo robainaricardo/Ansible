@@ -1,0 +1,75 @@
+---
+- name: Managing filesystem and LVM
+  hosts: all
+  tasks:
+          - name: Print host name
+            debug:
+                    var: ansible_fqdn
+
+          - name: Creating a 500Mib Partition
+            parted:
+                    device: /dev/vdb
+                    number: 1
+                    state: present
+                    part_end: 500MiB
+            when: ansible_fqdn == "hosta"
+            
+          - name: Handle execptions
+            block:
+                    - name: Create a Volume Group
+                      lvg:
+                              vg: lvg1
+                              pvs: /dev/vdb1
+                              pesize: 32
+                    - name: Create a Logical Volume
+                      lvol:
+                              vg: lvg1
+                              lv: lv1
+                              size: 256
+            rescue:
+                    - name: Create the partition
+                      parted:
+                              device: /dev/vdb
+                              number: 1
+                              state: present
+                              part_end: 2GiB
+                    - name: Creating the Volume group
+                      lvg:
+                              vg: lvg1
+                              pvs: /dev/vdb1
+                              pesize: 8
+                    - name: Create a Logical Volume
+                      lvol:
+                              vg: lvg1
+                              lv: lv1
+                              size: 1500
+            always:
+                    - name: Creating the mount point
+                      file:
+                              path: /mount_point
+                              state: directory
+                              owner: student
+                              group: student
+
+                    - name: Format the filesystem
+                      filesystem:
+                             fstype: xfs
+                             dev: /dev/lvg1/lv1
+
+                    - name: Mounting the filesystem
+                      mount:
+                             path: /mount_point
+                             src: /dev/lvg1/lv1
+                             fstype: xfs
+                             state: present
+                    - name: Reboot the hosts
+                      reboot:
+
+                    - name: Show the filesystem
+                      command:
+                              cmd: lsblk
+                      register: fs
+                    - name: Print filesystem
+                      debug:
+                              var: fs.stdout_lines
+...
