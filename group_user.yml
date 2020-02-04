@@ -1,0 +1,27 @@
+---
+- name: Creating groups and users
+  hosts: all
+  vars_files:
+          - secrets/user_pass.yml
+          - vars/groups_users.yml
+  vars:
+          - all_groups:
+                  - test
+                  - production
+  tasks:
+          - name: Creating Goups
+            group:
+                    name: "{{ item }}"
+                    state: present
+            when: '"{{ item }}" in group_names'
+            loop: "{{ all_groups }}"
+
+          - name: Creating users
+            user:
+                    name: "{{ item.name }}"
+                    password: "{{ user_password | password_hash('sha512')}}"
+                    state: present
+                    groups: "{{ item.group }}"
+                    append: yes
+            when: '"{{ item.group }}" in group_names '
+            loop: "{{ users }}"

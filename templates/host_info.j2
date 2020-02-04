@@ -1,0 +1,8 @@
+# Jinja2 template to get host info
+---------------------------------
+FQDN: {{ ansible_fqdn | default('none') }}
+IP: {{ ansible_ipv4.address | default('none') }}
+Kernel: {{ ansible_facts.kernel | default('none') }}
+Distro: {{ ansible_facts.distribution | default('none') }}
+VDA Size: {{ ansible_facts.devices.vda.partitions.vda1.size | default('none') }}
+VDVOID Size: {{ ansible_facts.devices.VDVOID.partitions.VDVOID.size | default('none') }}

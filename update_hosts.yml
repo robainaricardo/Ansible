@@ -1,0 +1,13 @@
+---
+- name: Update all hosts
+  hosts: all
+  tasks:
+          - name: Update all managed hosts
+            yum:
+                    name: '*'
+                    state: latest
+            notify: restart hosts
+  handlers:
+          - name: restart hosts
+            reboot:
+...

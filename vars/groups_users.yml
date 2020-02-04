@@ -1,0 +1,10 @@
+---
+users:
+        - name: admin1
+          group: test
+        - name: admin2
+          group: test
+        - name: developer1
+          group: production
+        - name: developer2
+          group: production

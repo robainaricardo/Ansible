@@ -1,0 +1,16 @@
+---
+- name: Changing hostnames
+  hosts: all
+  vars:
+        hosts:
+          - actual: "servera"
+            new: "hosta"
+          - actual: "serverb"
+            new: "hostb"
+  tasks:
+          - name: Change hostname
+            hostname:
+                    name: "{{ item.new }}"
+            when: 'ansible_fqdn == "{{ item.actual }}"'
+            loop: "{{ hosts }}"
+...

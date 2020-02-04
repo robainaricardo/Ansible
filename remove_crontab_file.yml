@@ -1,0 +1,11 @@
+---
+- name: Remove scheduled cron job
+  hosts: test
+  tasks:
+          - name: Cron job removed
+            cron:
+                    name: Crontab file exists
+                    user: devops
+                    cron_file: add-date-time
+                    state: absent 
+...

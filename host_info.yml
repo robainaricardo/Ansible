@@ -1,0 +1,20 @@
+---
+- name: Info of the managed hosts
+  hosts: all
+  tasks:
+          - name: Deploy the template
+            template:
+                    src: templates/host_info.j2
+                    dest: /host_info
+                    owner: student
+                    group: student
+         
+          - name: Show results
+            command:
+                    cmd: cat /host_info
+            register: info
+
+          - name: Show info
+            debug:
+                    var: info.stdout_lines
+...
